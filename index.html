@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>GRIP SOCIAL</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e8ff47">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GRIP">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1c1c28;
+  --accent: #e8ff47;
+  --accent2: #ff6b35;
+  --text: #f0f0f0;
+  --muted: #5a5a72;
+  --border: #2a2a3a;
+  --card-h: 320px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Background texture */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background: radial-gradient(ellipse at 20% 10%, #1a1a2e 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 90%, #0d1117 0%, transparent 50%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* HEADER */
+header {
+  position: relative;
+  z-index:10;
+  padding: 14px 20px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  line-height:1;
+}
+
+.logo span {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 2px;
+  display:block;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+}
+
+.header-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.stat-pill {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* CONTROLS */
+.controls {
+  position: relative;
+  z-index:10;
+  padding: 10px 16px;
+  display: flex;
+  gap: 8px;
+}
+
+select {
+  flex:1;
+  padding: 9px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+select:focus { border-color: var(--accent); }
+
+/* MODE TABS */
+.mode-tabs {
+  position: relative;
+  z-index:10;
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 10px;
+}
+
+.tab {
+  flex:1;
+  padding: 8px 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+}
+
+/* CARD AREA */
+.card-wrap {
+  position: relative;
+  z-index:10;
+  flex:1;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px 20px 18px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+
+.card::before {
+  content:'';
+  position:absolute;
+  top:-40px; left:-40px;
+  width:120px; height:120px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(232,255,71,0.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+.card.flash {
+  animation: cardFlash 0.25s ease;
+}
+
+@keyframes cardFlash {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.97); opacity:0.7; }
+  100% { transform: scale(1); opacity:1; }
+}
+
+.card-tag {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.phrase-memory {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.5;
+  font-weight: 300;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.phrase-generated {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--text);
+  flex:1;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.card-context {
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--surface2);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+.fav-indicator {
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.fav-indicator.visible { opacity:1; }
+
+/* ACTION BUTTONS */
+.actions {
+  position: relative;
+  z-index:10;
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px 6px;
+}
+
+.btn {
+  flex:1;
+  padding: 13px 0;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn:active { transform: scale(0.96); }
+
+.btn-prev { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+.btn-next { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+.btn-like { background: rgba(232,255,71,0.12); color: var(--accent); border: 1px solid rgba(232,255,71,0.2); }
+.btn-skip { background: rgba(255,107,53,0.1); color: var(--accent2); border: 1px solid rgba(255,107,53,0.2); }
+.btn-star { background: var(--accent); color: #000; font-weight: 600; flex: 1.5; }
+
+/* FAVORITES PANEL */
+.fav-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.fav-panel.open { transform: translateX(0); }
+
+.fav-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.fav-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--accent);
+}
+
+.fav-close {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+}
+
+.fav-list {
+  flex:1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fav-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.fav-item-text { flex:1; }
+.fav-item-phrase { font-size: 15px; line-height: 1.4; }
+.fav-item-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.fav-delete {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 4px;
+  transition: color 0.2s;
+}
+.fav-delete:hover { color: var(--accent2); }
+
+.fav-empty {
+  text-align: center;
+  color: var(--muted);
+  margin-top: 60px;
+  font-size: 14px;
+}
+
+.fav-empty span { font-size: 32px; display:block; margin-bottom:10px; }
+
+/* FAV BUTTON in header */
+.fav-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* BOTTOM SPACE */
+.bottom-pad { height: 10px; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--accent);
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 200;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FAVORITES PANEL -->
+<div class="fav-panel" id="favPanel">
+  <div class="fav-header">
+    <div class="fav-title">⭐ SAVED</div>
+    <button class="fav-close" onclick="closeFavs()">✕ Close</button>
+  </div>
+  <div class="fav-list" id="favList"></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    GRIP
+    <span>SOCIAL COACH</span>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <div class="header-stats">
+      <div class="stat-pill">👍 <span id="statLike">0</span></div>
+      <div class="stat-pill">⭐ <span id="statUsed">0</span></div>
+    </div>
+    <button class="fav-btn" onclick="openFavs()">📂 <span id="favCount">0</span></button>
+  </div>
+</header>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <select id="place" onchange="next()">
+    <option value="cafe">☕ Cafe</option>
+    <option value="street">🏙️ Street</option>
+    <option value="hotel">🏨 Hotel</option>
+    <option value="group">👥 Group</option>
+    <option value="gym">💪 Gym</option>
+    <option value="event">🎉 Event</option>
+  </select>
+  <select id="intent" onchange="next()">
+    <option value="neutral">😶 Neutral</option>
+    <option value="friend">🤝 Friend</option>
+    <option value="date">❤️ Date</option>
+    <option value="bro">🤜 Bro</option>
+    <option value="network">💼 Network</option>
+  </select>
+</div>
+
+<!-- MODE TABS -->
+<div class="mode-tabs">
+  <button class="tab active" id="tab-opener" onclick="setMode('opener')">Opener</button>
+  <button class="tab" id="tab-follow" onclick="setMode('follow')">Follow-Up</button>
+  <button class="tab" id="tab-hook" onclick="setMode('hook')">Hook</button>
+  <button class="tab" id="tab-exit" onclick="setMode('exit')">Exit</button>
+</div>
+
+<!-- CARD -->
+<div class="card-wrap">
+  <div class="card" id="mainCard">
+    <div>
+      <div class="card-tag" id="cardTag">OPENER</div>
+      <div class="phrase-memory" id="memory">Loading...</div>
+      <div class="phrase-generated" id="generated">Loading...</div>
+    </div>
+    <div class="card-footer">
+      <div class="card-context" id="cardContext">cafe · neutral</div>
+      <div class="fav-indicator" id="favIndicator">⭐ Saved!</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="actions">
+  <button class="btn btn-prev" onclick="prev()">← Back</button>
+  <button class="btn btn-next" onclick="next()">Next →</button>
+</div>
+
+<!-- FEEDBACK -->
+<div class="actions">
+  <button class="btn btn-like" onclick="like()">👍 Good</button>
+  <button class="btn btn-skip" onclick="skip()">👎 Skip</button>
+  <button class="btn btn-star" onclick="saveFav()">⭐ Save</button>
+</div>
+
+<div class="bottom-pad"></div>
+
+<script>
+// =====================
+// DATA
+// =====================
+
+const phrases = {
+  opener: {
+    cafe: {
+      neutral: ["Nice vibe dito ah.", "Chill place to", "Busy ka ba ngayon?", "First time mo dito?"],
+      friend: ["Nag-try ka na ng menu nila?", "Lagi ka ba dito? Madalas kita nakikita.", "Okay ba wifi dito?"],
+      date: ["Di ba maganda dito? Parang date spot ah.", "Good choice ng place.", "Chill dito, okay para sa usap."],
+      bro: ["Solid spot bro ah.", "Kape muna bago laban bro.", "Bet place to bro solid."],
+      network: ["You work nearby?", "Do you usually hold meetings here?", "Good spot for focus work no?"]
+    },
+    street: {
+      neutral: ["Busy area today ah.", "Medyo traffic ha.", "Malapit ka lang dito?"],
+      friend: ["Saan ka punta?", "Kilala mo ba tong area?", "Lagi ka ba dito?"],
+      date: ["Nice area ah, dito ka lagi?", "Gusto ko tong part ng city.", "Malapit ka ba dito?"],
+      bro: ["Bro pabilis na traffic.", "Solid area to ah bro.", "Uy bro, tara na."],
+      network: ["You work around here?", "Know any good spots here?", "Are you local in this area?"]
+    },
+    hotel: {
+      neutral: ["Nice property to ah.", "First time mo dito?", "Maganda service nila no?"],
+      friend: ["Naka-stay ka na ba dito?", "May event ka ba?", "Malapit ka ba sa hotel na to?"],
+      date: ["Maganda tong hotel ah, may occasion ka?", "Di ba nice lobby?", "Okay ang ambiance dito no?"],
+      bro: ["Bro solid hotel to ah.", "Uy bro event ka ba?", "Solid place bro."],
+      network: ["Are you here for the event?", "What brings you here?", "First time in this property?"]
+    },
+    group: {
+      neutral: ["Barkada niyo?", "Tagal na kayong magkakakilala?", "May okasyon?"],
+      friend: ["Saan kayo usually nag-tambay?", "Anong grupo to ah?", "Okay yata trip niyo?"],
+      date: ["Kasama mo mga friends mo? Ang saya.", "Barkada niyo?", "Nice energy ng grupo niyo."],
+      bro: ["Bro, solid squad niyo ah.", "Lagi ba kayong mag-grupo?", "Uy bro, ang dami ninyo."],
+      network: ["Are you all from the same company?", "Do you all work together?", "What brought the group together?"]
+    },
+    gym: {
+      neutral: ["Lagi ka ba dito?", "Matagal ka nang nag-gym dito?", "Okay equipment nila no?"],
+      friend: ["Sino trainer mo?", "Anong program mo?", "Taga-dito ka rin ba?"],
+      date: ["Consistent ka ah, lagi kita nakikita dito.", "Anong workout mo ngayon?", "Solid progress mo ah."],
+      bro: ["Bro, solid gains.", "Anong program mo bro?", "Pwede ko bang makita routine mo bro?"],
+      network: ["Are you a trainer here?", "What program are you running?", "How long have you been training here?"]
+    },
+    event: {
+      neutral: ["First time mo sa event na to?", "Kilala mo organizer?", "Okay turnout ah."],
+      friend: ["Sino invite sa iyo?", "Okay ang event no?", "Kilala mo ba ibang tao dito?"],
+      date: ["Di ba maganda event na to? Glad ka na nandito ka?", "Sino kasama mo?", "Anong inaalala mo sa event na to?"],
+      bro: ["Bro solid event to.", "Uy bro tara libre food.", "Solid lineup bro ah."],
+      network: ["What industry are you in?", "Did you know many people here?", "What brought you to this event?"]
+    }
+  },
+  follow: {
+    neutral: ["Dito ka lagi?", "Anong work mo?", "Kumain ka na ba?", "Matagal ka pa ba dito?"],
+    friend: ["Anong pinaka-favorite mo dito?", "Sino kasama mo today?", "Plano mo pa ba ulit?"],
+    date: ["Anong pinaka-bet mo sa lugar na to?", "Ano ka ginagawa mo free time?", "Chill ka ah, I like that."],
+    bro: ["Bro anong crack?", "Anong balak mo after?", "Bro sama ka sa susunod."],
+    network: ["What do you do for work?", "Are you based here?", "What are you working on lately?"]
+  },
+  hook: {
+    neutral: ["Weird question pero — ano pinaka-random skill mo?", "If you weren't here, where would you be right now?", "Best advice you ever ignored?"],
+    friend: ["Anong pinaka-memorable na trip mo?", "Kung malaya ka bukas, ano gagawin mo?", "Anong show pinapanood mo ngayon?"],
+    date: ["What's something people always get wrong about you?", "Anong pinaka-underrated na bagay sa buhay mo?", "If you could only eat one food forever, what would it be?"],
+    bro: ["Bro kung walang pera limitasyon, ano gagawin mo?", "Anong pinaka-dumb risk na ginawa mo na nag-work?", "Bro kung may superpower ka, ano?"],
+    network: ["What's the best business advice you've gotten?", "What are you learning right now?", "What's a problem in your industry nobody talks about?"]
+  },
+  exit: {
+    neutral: ["Enjoy your time.", "Nice talking.", "See you around."],
+    friend: ["Ayos, let's hang again soon.", "Add mo ko sa socials.", "Nice ka pala, saan ka usually?"],
+    date: ["Nice talking to you, really.", "Sana ulit tayo mag-usap.", "Take care ha? Ikaw ang mag-message."],
+    bro: ["Bro solid ka, sige laban.", "Uy bro, next time sama ka.", "Bro take care, in touch tayo."],
+    network: ["Let's connect on LinkedIn.", "I'll send you a message.", "Nice to meet you, let's keep in touch."]
+  }
+};
+
+// =====================
+// STATE
+// =====================
+
+let mode = "opener";
+let history = [];
+let historyIndex = -1;
+let stats = JSON.parse(localStorage.getItem("gripStats_v6")) || { like:0, skip:0, used:0 };
+let favorites = JSON.parse(localStorage.getItem("gripFavs_v6")) || [];
+
+// =====================
+// RENDER
+// =====================
+
+function getPhrase(m, place, intent) {
+  if (m === "opener") {
+    let pool = phrases.opener[place]?.[intent] || phrases.opener[place]?.["neutral"] || [];
+    return pool[Math.floor(Math.random() * pool.length)] || "Nice one ah.";
+  }
+  if (m === "follow" || m === "hook" || m === "exit") {
+    let pool = phrases[m]?.[intent] || phrases[m]?.["neutral"] || [];
+    return pool[Math.floor(Math.random() * pool.length)] || "...";
+  }
+  return "...";
+}
+
+function getMemory(m) {
+  let openers = ["Observe first before speaking.", "Match their energy level.", "Ask, don't perform.", "Less is more — short is sharp.", "Genuine > Clever."];
+  return openers[Math.floor(Math.random() * openers.length)];
+}
+
+function buildCard() {
+  let place = document.getElementById("place").value;
+  let intent = document.getElementById("intent").value;
+  let phrase = getPhrase(mode, place, intent);
+  let mem = getMemory(mode);
+  return { phrase, mem, mode, place, intent };
+}
+
+function renderCard(card) {
+  document.getElementById("cardTag").innerText = card.mode.toUpperCase();
+  document.getElementById("memory").innerText = card.mem;
+  document.getElementById("generated").innerText = card.phrase;
+  document.getElementById("cardContext").innerText = `${card.place} · ${card.intent}`;
+  document.getElementById("favIndicator").classList.remove("visible");
+
+  let el = document.getElementById("mainCard");
+  el.classList.remove("flash");
+  void el.offsetWidth;
+  el.classList.add("flash");
+}
+
+function next() {
+  if (historyIndex < history.length - 1) {
+    history = history.slice(0, historyIndex + 1);
+  }
+  let card = buildCard();
+  history.push(card);
+  historyIndex = history.length - 1;
+  renderCard(card);
+}
+
+function prev() {
+  if (historyIndex > 0) {
+    historyIndex--;
+    renderCard(history[historyIndex]);
+  } else {
+    showToast("No previous card");
+  }
+}
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("tab-" + m).classList.add("active");
+  next();
+}
+
+// =====================
+// STATS
+// =====================
+
+function updateStats() {
+  document.getElementById("statLike").innerText = stats.like;
+  document.getElementById("statUsed").innerText = stats.used;
+  document.getElementById("favCount").innerText = favorites.length;
+}
+
+function like() {
+  stats.like++;
+  localStorage.setItem("gripStats_v6", JSON.stringify(stats));
+  updateStats();
+  showToast("👍 Noted!");
+}
+
+function skip() {
+  stats.skip++;
+  localStorage.setItem("gripStats_v6", JSON.stringify(stats));
+  next();
+}
+
+// =====================
+// FAVORITES
+// =====================
+
+function saveFav() {
+  if (historyIndex < 0) return;
+  let card = history[historyIndex];
+  let already = favorites.find(f => f.phrase === card.phrase);
+  if (already) { showToast("Already saved!"); return; }
+  stats.used++;
+  favorites.push({ ...card, savedAt: Date.now() });
+  localStorage.setItem("gripFavs_v6", JSON.stringify(favorites));
+  localStorage.setItem("gripStats_v6", JSON.stringify(stats));
+  updateStats();
+  document.getElementById("favIndicator").classList.add("visible");
+  showToast("⭐ Saved to favorites!");
+}
+
+function openFavs() {
+  renderFavList();
+  document.getElementById("favPanel").classList.add("open");
+}
+
+function closeFavs() {
+  document.getElementById("favPanel").classList.remove("open");
+}
+
+function renderFavList() {
+  let list = document.getElementById("favList");
+  if (favorites.length === 0) {
+    list.innerHTML = `<div class="fav-empty"><span>⭐</span>No saved phrases yet.<br>Tap Save on a card you like.</div>`;
+    return;
+  }
+  list.innerHTML = favorites.map((f, i) => `
+    <div class="fav-item">
+      <div class="fav-item-text">
+        <div class="fav-item-phrase">${f.phrase}</div>
+        <div class="fav-item-meta">${f.mode} · ${f.place} · ${f.intent}</div>
+      </div>
+      <button class="fav-delete" onclick="deleteFav(${i})">🗑</button>
+    </div>
+  `).join("");
+}
+
+function deleteFav(i) {
+  favorites.splice(i, 1);
+  localStorage.setItem("gripFavs_v6", JSON.stringify(favorites));
+  updateStats();
+  renderFavList();
+}
+
+// =====================
+// TOAST
+// =====================
+
+let toastTimer;
+function showToast(msg) {
+  let t = document.getElementById("toast");
+  t.innerText = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+// =====================
+// SWIPE GESTURE
+// =====================
+
+let touchStartX = 0;
+document.getElementById("mainCard").addEventListener("touchstart", e => {
+  touchStartX = e.touches[0].clientX;
+}, { passive: true });
+
+document.getElementById("mainCard").addEventListener("touchend", e => {
+  let dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -50) next();
+  else if (dx > 50) prev();
+}, { passive: true });
+
+// =====================
+// INIT
+// =====================
+
+updateStats();
+next();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/grip-social/sw.js")
+      .then(r => console.log("SW registered:", r.scope))
+      .catch(e => console.log("SW error:", e));
+  });
+}
+</script>
+</body>
+</html>
