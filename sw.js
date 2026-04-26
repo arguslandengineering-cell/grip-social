@@ -1,23 +1,19 @@
-const CACHE_NAME = 'grip-social-v1';
+const CACHE_NAME = 'grip-social-v7';
 
 const ASSETS = [
-  '/grip-social/',
-  '/grip-social/index.html',
-  '/grip-social/manifest.json',
-  'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap'
+  './',
+  './index.html',
+  './manifest.json',
+  'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap'
 ];
 
-// Install — cache all assets
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
   );
   self.skipWaiting();
 });
 
-// Activate — clean old caches
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -27,14 +23,15 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Fetch — serve from cache, fallback to network
 self.addEventListener('fetch', e => {
+  // Don't cache Anthropic API calls
+  if (e.request.url.includes('api.anthropic.com')) return;
+
   e.respondWith(
     caches.match(e.request).then(cached => {
       return cached || fetch(e.request).catch(() => {
-        // If totally offline and not cached, return index
         if (e.request.destination === 'document') {
-          return caches.match('/grip-social/index.html');
+          return caches.match('./index.html');
         }
       });
     })
