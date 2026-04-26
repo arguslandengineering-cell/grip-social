@@ -1,13 +1,13 @@
 {
   "name": "GRIP Social Coach",
   "short_name": "GRIP",
-  "description": "Conversation starter coach for any situation",
-  "start_url": "/grip-social/index.html",
+  "description": "AI-powered conversation starter coach for any situation",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0a0f",
   "theme_color": "#e8ff47",
   "orientation": "portrait",
-  "scope": "/grip-social/",
+  "scope": "./",
   "icons": [
     {
       "src": "icons/icon-192.png",
